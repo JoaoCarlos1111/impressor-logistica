@@ -1,9 +1,44 @@
 
 import os
+import platform
 from flask import Flask, render_template, request, jsonify, session
-import win32print
 import requests
 from dotenv import load_dotenv
+
+# Sistema de impressão específico para cada OS
+if platform.system() == 'Windows':
+    import win32print
+    def get_printers():
+        return [printer[2] for printer in win32print.EnumPrinters(2)]
+        
+    def print_document(printer_name, file_path):
+        try:
+            handle = win32print.OpenPrinter(printer_name)
+            win32print.StartDocPrinter(handle, 1, ("document", None, "RAW"))
+            with open(file_path, 'rb') as f:
+                data = f.read()
+            win32print.WritePrinter(handle, data)
+            win32print.EndDocPrinter(handle)
+            win32print.ClosePrinter(handle)
+            return True
+        except Exception as e:
+            print(f"Error printing: {e}")
+            return False
+else:
+    import cups
+    def get_printers():
+        conn = cups.Connection()
+        printers = conn.getPrinters()
+        return list(printers.keys())
+        
+    def print_document(printer_name, file_path):
+        try:
+            conn = cups.Connection()
+            conn.printFile(printer_name, file_path, "Document", {})
+            return True
+        except Exception as e:
+            print(f"Error printing: {e}")
+            return False
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -11,23 +46,6 @@ load_dotenv()
 
 API_TOKEN = os.getenv('API_TOKEN')
 API_BASE_URL = os.getenv('API_BASE_URL')
-
-def get_printers():
-    return [printer[2] for printer in win32print.EnumPrinters(2)]
-
-def print_document(printer_name, file_path):
-    try:
-        handle = win32print.OpenPrinter(printer_name)
-        win32print.StartDocPrinter(handle, 1, ("document", None, "RAW"))
-        with open(file_path, 'rb') as f:
-            data = f.read()
-        win32print.WritePrinter(handle, data)
-        win32print.EndDocPrinter(handle)
-        win32print.ClosePrinter(handle)
-        return True
-    except Exception as e:
-        print(f"Error printing: {e}")
-        return False
 
 def get_print_queue():
     headers = {'Authorization': f'Bearer {API_TOKEN}'}

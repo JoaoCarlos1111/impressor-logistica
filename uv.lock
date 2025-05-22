@@ -351,6 +351,15 @@ wheels = [
 ]
 
 [[package]]
+name = "cups"
+version = "0.0.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/99/3b/fc85e97bfc9dffcc3941fd79d97750198c9d7504051b053fab1046b73281/cups-0.0.6.tar.gz", hash = "sha256:6330d46aa3969278009d80514cbb2bee83ac3afbda18dae7a44ade3e2312c377", size = 1367 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/70/39/dd79726ce69922a627a0a9d6a5cece08e60ec44f70359399da951bc94053/cups-0.0.6-py3-none-any.whl", hash = "sha256:aa2c5b5c4f430917d32b9e0a7b367c6bf6961fa410d6de6adb16554f31455c40", size = 2502 },
+]
+
+[[package]]
 name = "cycler"
 version = "0.12.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1519,6 +1528,7 @@ name = "python-template"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "cups" },
     { name = "flask" },
     { name = "os-sys" },
     { name = "python-dotenv" },
@@ -1527,6 +1537,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "cups", specifier = ">=0.0.6" },
     { name = "flask", specifier = ">=3.1.1" },
     { name = "os-sys", specifier = ">=0.9.1" },
     { name = "python-dotenv", specifier = ">=1.1.0" },

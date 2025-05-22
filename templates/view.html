@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualização de Documentos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Visualização de Documentos - Caso #{{ case.id }}</h1>
+    
+    <div class="mb-4">
+        <h3>Detalhes do Caso</h3>
+        <p><strong>Cliente/Marca:</strong> {{ case.client_name }}</p>
+        <p><strong>Status:</strong> {{ case.status }}</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Notificação</h5>
+                    <embed src="{{ case.notification_pdf }}" type="application/pdf" width="100%" height="400px">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Procuração</h5>
+                    <embed src="{{ case.power_of_attorney_pdf }}" type="application/pdf" width="100%" height="400px">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Anúncio</h5>
+                    <embed src="{{ case.ad_pdf }}" type="application/pdf" width="100%" height="400px">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="/" class="btn btn-secondary">Voltar</a>
+        <button class="btn btn-primary" onclick="printCase()">Imprimir Este Caso</button>
+    </div>
+
+    <script>
+        function printCase() {
+            const caseId = '{{ case.id }}';
+            const printer = localStorage.getItem('selectedPrinter') || document.getElementById('printer').value;
+            
+            fetch('/print', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    printer: printer,
+                    'cases[]': [caseId]
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.results[0].success) {
+                    alert('Documento impresso com sucesso!');
+                    window.location.href = '/';
+                } else {
+                    alert('Erro ao imprimir o documento.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -28,6 +28,7 @@
                 <th>ID</th>
                 <th>Cliente/Marca</th>
                 <th>Status</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -37,6 +38,9 @@
                 <td>{{ case.id }}</td>
                 <td>{{ case.client_name }}</td>
                 <td class="status">Pendente</td>
+                <td>
+                    <a href="/view/{{ case.id }}" class="btn btn-sm btn-info">Visualizar</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

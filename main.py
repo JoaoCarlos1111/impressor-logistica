@@ -78,6 +78,19 @@ def login():
         return jsonify({'success': True})
     return jsonify({'success': False}), 401
 
+@app.route('/view/<case_id>')
+def view_case(case_id):
+    if not session.get('authenticated'):
+        return render_template('login.html')
+    
+    cases = get_print_queue()
+    case = next((c for c in cases if c['id'] == case_id), None)
+    
+    if not case:
+        return "Caso não encontrado", 404
+        
+    return render_template('view.html', case=case)
+
 @app.route('/print', methods=['POST'])
 def print_documents():
     if not session.get('authenticated'):
